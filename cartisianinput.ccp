@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	cout << "THIS IS THE FIRST OPTIMAL TSP SOLVER! \n"
+	cout << "THIS IS A TSP SOLVER! \n"
 		<<   "                 by Paul A. M. Dirac\n";
 	double Vertex[3000000];
 	ifstream tsp;
