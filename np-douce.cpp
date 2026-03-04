@@ -104,6 +104,65 @@ int main()
     cout << "the standard deviation = " << stand <<" " <<sqrt(stand)<< endl;
     double entropy = lgamma(n) - log(2.0);
     cout << "entropy " << entropy << "states " << exp(entropy)<<endl;
+    int ref1=0, ref2=0, CE=0, VCE=0;
+    double ref3;
+    for (int i = 1; i <= n - 1; i++)
+{
+    for (int j = i + 1; j <= n; j++)
+    {
+        if(Edge[0][i]!=0&&Edge[0][j]!=0){
+            ref1=Edge[0][i]; ref2=Edge[0][j]; ref3=Edge[ref1][ref2];
+            Edge[ref1][ref2]=Edge[ref2][ref1]=Edge[i][j]+Edge[i][ref1]+Edge[j][ref2];
+            Edge[0][ref1]=ref2; Edge[0][ref2]=ref1;
+            Edge[0][i]=-1; Edge[0][j]=-1;
+            VCE++; VCE++; CE--;
+            // CCE stuff ref1 and ref2
+            // reinitialized here
+             Edge[ref1][ref2]=Edge[ref2][ref1]=ref3;
+            Edge[0][ref1]=i; Edge[0][ref2]=j;
+            Edge[0][i]=ref1; Edge[0][j]=ref2;
+            ref1=0, ref2=0, ref3=0;
+            VCE--; VCE--; CE++;
+        }
+      if(Edge[0][i]==0&&Edge[0][j]!=0){
+            ref2=Edge[0][j]; ref3=Edge[ref2][i];
+            Edge[i][ref2]=Edge[ref2][i]=Edge[i][j]+Edge[j][ref2];
+            Edge[0][i]=ref2; Edge[0][ref2]=i; 
+            Edge[0][j]=-1;
+            VCE++; 
+           // CCE stuff ref1 and ref2
+            // reinitialized here
+            Edge[i][ref2]=Edge[ref2][i]=ref3;
+            Edge[0][i]=0; Edge[0][ref2]=j; 
+            Edge[0][j]=ref2; 
+            ref2=0, ref3=0;
+            VCE--; 
+      }
+        if(Edge[0][j]==0&&Edge[0][i]!=0){
+             ref2=Edge[0][i]; ref3=Edge[ref2][j];
+            Edge[j][ref2]=Edge[ref2][j]=Edge[i][j]+Edge[i][ref2];
+            Edge[0][j]=ref2; Edge[0][ref2]=j; 
+            Edge[0][i]=-1;
+            VCE++; 
+           // CCE stuff ref1 and ref2
+            // reinitialized here 
+            Edge[j][ref2]=Edge[ref2][j]=ref3;
+            Edge[0][j]=0; Edge[0][ref2]=i; 
+            Edge[0][i]=ref2; 
+            ref2=0, ref3=0;
+            VCE--; 
+        }
+        if(Edge[0][i]==0&&Edge[0][j]==0){
+            Edge[0][i]=j; Edge[0][j]=i;
+            CE++; VCE++; VCE++;
+            // CCE stuff ref1 and ref2
+            // reinitialized here
+              Edge[0][i]=0; Edge[0][j]=0;
+            CE++; VCE--; VCE--;
+        }
+    }
+}
 
     return 0;
+
 }
