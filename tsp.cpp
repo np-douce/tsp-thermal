@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	cout << "THIS IS THE FIRST OPTIMAL TSP SOLVER! \n"
+	cout << "THIS IS A TSP SOLVER! \n"
 		<< "                    by Michel Seraphin"
 		<< "\n\nFirst, how many vertex does your graph have?\n";
 
