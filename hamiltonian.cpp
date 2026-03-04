@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-	cout << "THIS IS NOT THE FIRST OPTIMAL HC SOLVER! \n"
+	cout << "THIS IS A HC SOLVER! \n"
 		<< "                 by Paul A. M. Dirac\n";
 
 	int Vertex[100], Edges[70][70] = { 0 }, n = 1, np;
