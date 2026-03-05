@@ -6,7 +6,7 @@ int main()
 {
     int n;
     cout << "Enter number of vertices (max 50): ";
-    cin >> n;                
+    cin >> n;
 
     if (n < 1 || n > 50)
     {
@@ -75,14 +75,14 @@ int main()
         {
             for (int k = j + 1; k <= n; k++)
             {
-                if (i!=j&&i!=k) {
+                if (i != j && i != k) {
                     S_neighbor += Edge[i][j] * Edge[i][k];
                 }
             }
         }
     }
 
-    double S_non_neighbor =0.0;
+    double S_non_neighbor = 0.0;
     for (int i = 1; i <= n; i++)
     {
         for (int j = i + 1; j <= n; j++)
@@ -100,126 +100,131 @@ int main()
         }
     }
 
-   double stand = ((2.0 / (b - 1)) * (S_self)) + ((4.0 / ((b - 1) * (b - 2))) * (S_neighbor + (2 * S_non_neighbor))) - (average * average);
-    cout << "the standard deviation = " << stand <<" " <<sqrt(stand)<< endl;
+    double stand = ((2.0 / (b - 1)) * (S_self)) + ((4.0 / ((b - 1) * (b - 2))) * (S_neighbor + (2 * S_non_neighbor))) - (average * average);
+    cout << "the standard deviation = " << stand << " " << sqrt(stand) << endl;
     double entropy = lgamma(n) - log(2.0);
-    cout << "entropy " << entropy << "states " << exp(entropy)<<endl;
-    int ref1=0, ref2=0, CE=0, VCE=0;
-    double ref3; Edge[0][1]=2;Edge[0][2]=1;Edge[0][3]=-1; Edge[1][2]=Edge[2][1]=Edge[1][3]+Edge[2][3];
-    for (int i = 1; i <= n - 1; i++){
-        if (Edge[0][i]==-1){continue;}
-    for (int j = i + 1; j <= n; j++) {
-         if (Edge[0][j]==-1|| Edge[0][i]==j|| Edge[0][j]==i){continue;}
-        if(Edge[0][i]!=0&&Edge[0][j]!=0){
-            ref1=Edge[0][i]; ref2=Edge[0][j]; ref3=Edge[ref1][ref2];
-            Edge[ref1][ref2]=Edge[ref2][ref1]=Edge[i][j]+Edge[i][ref1]+Edge[j][ref2];
-            Edge[0][ref1]=ref2; Edge[0][ref2]=ref1;
-            Edge[0][i]=-1; Edge[0][j]=-1;
-            VCE++; VCE++; CE--;
-            // CCE stuff ref1 and ref2
-            cout <<"CCE situation"
-            for(y=1; y<n; y++){
-                for(z=1+y; z<=n; z++){
-                    if (Edge[0][y]==0&&Edge[0][z]!=0||Edge[0][y]!=0&&Edge[0][z]==0){
-                       cout << " neighbor edge "<<y<<" "<<z<<endl; 
+    cout << "entropy " << entropy << "states " << exp(entropy) << endl;
+    int ref1 = 0, ref2 = 0, CE = 0, VCE = 0;
+    double ref3; Edge[0][1] = 2;Edge[0][2] = 1;Edge[0][3] = -1; Edge[1][2] = Edge[2][1] = Edge[1][3] + Edge[2][3];
+    for (int i = 1; i <= n - 1; i++) {
+        if (Edge[0][i] == -1) { continue; }
+        for (int j = i + 1; j <= n; j++) {
+            if (Edge[0][j] == -1 || Edge[0][i] == j || Edge[0][j] == i) { continue; }
+            if (Edge[0][i] != 0 && Edge[0][j] != 0) {
+                ref1 = Edge[0][i]; ref2 = Edge[0][j]; ref3 = Edge[ref1][ref2];
+                Edge[ref1][ref2] = Edge[ref2][ref1] = Edge[i][j] + Edge[i][ref1] + Edge[j][ref2];
+                Edge[0][ref1] = ref2; Edge[0][ref2] = ref1;
+                Edge[0][i] = -1; Edge[0][j] = -1;
+                VCE++; VCE++; CE--;
+                // CCE stuff ref1 and ref2
+                cout << "CCE situation "<<ref1<<" "<<ref2 << endl;
+                for (int y = 1; y < n; y++) {if (Edge[0][y]==-1) { continue; }
+                        for (int z = 1 + y; z <= n; z++) {if (Edge[0][z] == -1) { continue; }
+                            if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                                cout << " neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
+                                cout << " connecting chosen neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                                cout << " independent edge " << y << " " << z << endl;
+                            }
+                        }
                     }
-                    if (Edge[0][y]!=0&&Edge[0][z]!=0){
-                       cout << " connecting chosen neighbor edge "<<y<<" "<<z<<endl; 
-                    }
-                    if (Edge[0][y]==0&&Edge[0][z]==0){
-                       cout << " independent edge "<<y<<" "<<z<<endl; 
-                    }
-                }
+                // reinitialized here
+                Edge[ref1][ref2] = Edge[ref2][ref1] = ref3;
+                Edge[0][ref1] = i; Edge[0][ref2] = j;
+                Edge[0][i] = ref1; Edge[0][j] = ref2;
+                ref1 = 0, ref2 = 0, ref3 = 0;
+                VCE--; VCE--; CE++;
             }
-            // reinitialized here
-             Edge[ref1][ref2]=Edge[ref2][ref1]=ref3;
-            Edge[0][ref1]=i; Edge[0][ref2]=j;
-            Edge[0][i]=ref1; Edge[0][j]=ref2;
-            ref1=0, ref2=0, ref3=0;
-            VCE--; VCE--; CE++;
-        }
-      if(Edge[0][i]==0&&Edge[0][j]!=0){
-            ref2=Edge[0][j]; ref3=Edge[ref2][i];
-            Edge[i][ref2]=Edge[ref2][i]=Edge[i][j]+Edge[j][ref2];
-            Edge[0][i]=ref2; Edge[0][ref2]=i; 
-            Edge[0][j]=-1;
-            VCE++; 
-           // CCE stuff ref1 and ref2
-          cout <<"NE situation J"
-            for(y=1; y<n; y++){
-                for(z=1+y; z<=n; z++){
-                    if (Edge[0][y]==0&&Edge[0][z]!=0||Edge[0][y]!=0&&Edge[0][z]==0){
-                       cout << " neighbor edge "<<y<<" "<<z<<endl; 
+            if (Edge[0][i] == 0 && Edge[0][j] != 0) {
+                ref2 = Edge[0][j]; ref3 = Edge[ref2][i];
+                Edge[i][ref2] = Edge[ref2][i] = Edge[i][j] + Edge[j][ref2];
+                Edge[0][i] = ref2; Edge[0][ref2] = i;
+                Edge[0][j] = -1;
+                VCE++;
+                // CCE stuff ref1 and ref2
+                cout << "NE situation J " <<i<<" "<<ref2 << endl;
+                    for (int y = 1; y < n; y++) {
+                        if (Edge[0][y] == -1) { continue; }
+                        for (int z = 1 + y; z <= n; z++) {
+                            if (Edge[0][z] == -1) { continue; }
+                            if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                                cout << " neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y ) {
+                                cout << " connecting chosen neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                                cout << " independent edge " << y << " " << z << endl;
+                            }
+                        }
                     }
-                    if (Edge[0][y]!=0&&Edge[0][z]!=0){
-                       cout << " connecting chosen neighbor edge "<<y<<" "<<z<<endl; 
-                    }
-                    if (Edge[0][y]==0&&Edge[0][z]==0){
-                       cout << " independent edge "<<y<<" "<<z<<endl; 
-                    }
-                }
+                // reinitialized here
+                Edge[i][ref2] = Edge[ref2][i] = ref3;
+                Edge[0][i] = 0; Edge[0][ref2] = j;
+                Edge[0][j] = ref2;
+                ref2 = 0, ref3 = 0;
+                VCE--;
             }
-            // reinitialized here
-            Edge[i][ref2]=Edge[ref2][i]=ref3;
-            Edge[0][i]=0; Edge[0][ref2]=j; 
-            Edge[0][j]=ref2; 
-            ref2=0, ref3=0;
-            VCE--; 
-      }
-        if(Edge[0][j]==0&&Edge[0][i]!=0){
-             ref2=Edge[0][i]; ref3=Edge[ref2][j];
-            Edge[j][ref2]=Edge[ref2][j]=Edge[i][j]+Edge[i][ref2];
-            Edge[0][j]=ref2; Edge[0][ref2]=j; 
-            Edge[0][i]=-1;
-            VCE++; 
-           // CCE stuff ref1 and ref2
-            cout <<"NE situation I"
-            for(y=1; y<n; y++){
-                for(z=1+y; z<=n; z++){
-                    if (Edge[0][y]==0&&Edge[0][z]!=0||Edge[0][y]!=0&&Edge[0][z]==0){
-                       cout << " neighbor edge "<<y<<" "<<z<<endl; 
+            if (Edge[0][j] == 0 && Edge[0][i] != 0) {
+                ref2 = Edge[0][i]; ref3 = Edge[ref2][j];
+                Edge[j][ref2] = Edge[ref2][j] = Edge[i][j] + Edge[i][ref2];
+                Edge[0][j] = ref2; Edge[0][ref2] = j;
+                Edge[0][i] = -1;
+                VCE++;
+                // CCE stuff ref1 and ref2
+                cout << "NE situation I "<<ref2<<" "<<j << endl;
+                    for (int y = 1; y < n; y++) {
+                        if (Edge[0][y] == -1) { continue; }
+                        for (int z = 1 + y; z <= n; z++) {
+                            if (Edge[0][z] == -1) { continue; }
+                            if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                                cout << " neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
+                                cout << " connecting chosen neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                                cout << " independent edge " << y << " " << z << endl;
+                            }
+                        }
                     }
-                    if (Edge[0][y]!=0&&Edge[0][z]!=0){
-                       cout << " connecting chosen neighbor edge "<<y<<" "<<z<<endl; 
-                    }
-                    if (Edge[0][y]==0&&Edge[0][z]==0){
-                       cout << " independent edge "<<y<<" "<<z<<endl; 
-                    }
-                }
+                // reinitialized here 
+                Edge[j][ref2] = Edge[ref2][j] = ref3;
+                Edge[0][j] = 0; Edge[0][ref2] = i;
+                Edge[0][i] = ref2;
+                ref2 = 0, ref3 = 0;
+                VCE--;
             }
-            // reinitialized here 
-            Edge[j][ref2]=Edge[ref2][j]=ref3;
-            Edge[0][j]=0; Edge[0][ref2]=i; 
-            Edge[0][i]=ref2; 
-            ref2=0, ref3=0;
-            VCE--; 
-        }
-        if(Edge[0][i]==0&&Edge[0][j]==0){
-            Edge[0][i]=j; Edge[0][j]=i;
-            CE++; VCE++; VCE++;
-            // CCE stuff ref1 and ref2
-            cout <<"IE situation"
-            for(y=1; y<n; y++){
-                for(z=1+y; z<=n; z++){
-                    if (Edge[0][y]==0&&Edge[0][z]!=0||Edge[0][y]!=0&&Edge[0][z]==0){
-                       cout << " neighbor edge "<<y<<" "<<z<<endl; 
+            if (Edge[0][i] == 0 && Edge[0][j] == 0) {
+                Edge[0][i] = j; Edge[0][j] = i;
+                CE++; VCE++; VCE++;
+                // CCE stuff ref1 and ref2
+                cout << "IE situation " <<i<<" "<<j << endl;
+                    for (int y = 1; y < n; y++) {
+                        if (Edge[0][y] == -1) { continue; }
+                        for (int z = 1 + y; z <= n; z++) {
+                            if (Edge[0][z] == -1) { continue; }
+                            if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                                cout << " neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
+                                cout << " connecting chosen neighbor edge " << y << " " << z << endl;
+                            }
+                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                                cout << " independent edge " << y << " " << z << endl;
+                            }
+                        }
                     }
-                    if (Edge[0][y]!=0&&Edge[0][z]!=0){
-                       cout << " connecting chosen neighbor edge "<<y<<" "<<z<<endl; 
-                    }
-                    if (Edge[0][y]==0&&Edge[0][z]==0){
-                       cout << " independent edge "<<y<<" "<<z<<endl; 
-                    }
-                }
+                // reinitialized here
+                Edge[0][i] = 0; Edge[0][j] = 0;
+                CE++; VCE--; VCE--;
             }
-            // reinitialized here
-              Edge[0][i]=0; Edge[0][j]=0;
-            CE++; VCE--; VCE--;
         }
     }
-}
 
     return 0;
 
 }
-
