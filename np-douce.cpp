@@ -104,153 +104,156 @@ int main()
     cout << "the standard deviation = " << stand << " " << sqrt(stand) << endl;
     double entropy = lgamma(n) - log(2.0);
     cout << "entropy " << entropy << "states " << exp(entropy) << endl;
-    int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce=0.0; 
-    double ref3; Edge[0][1] = 2;Edge[0][2] = 1;Edge[0][3] = -1; Edge[1][2] = Edge[2][1] = Edge[1][3] + Edge[2][3]; CE=1; VCE=3; sumce=Edge[1][2];
+    int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce = 0.0;
+    double ref3; Edge[0][1] = 2;Edge[0][2] = 1;Edge[0][3] = -1; Edge[1][2] = Edge[2][1] = Edge[1][3] + Edge[2][3]; CE = 1; VCE = 3; sumce = Edge[1][2];
     for (int i = 1; i <= n - 1; i++) {
         if (Edge[0][i] == -1) { continue; }
         for (int j = i + 1; j <= n; j++) {
+            double ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0;
+            double av = 0.0, va = 0.0;
             if (Edge[0][j] == -1 || Edge[0][i] == j || Edge[0][j] == i) { continue; }
             if (Edge[0][i] != 0 && Edge[0][j] != 0) {
-                sumce+=Edge[i][j];
-                ref1 = Edge[0][i]; ref2 = Edge[0][j]; ref3 = Edge[ref1][ref2];
-                Edge[ref1][ref2] = Edge[ref2][ref1] = Edge[i][j] + Edge[i][ref1] + Edge[j][ref2];
+                sumce += Edge[i][j];
+                ref1 = Edge[0][i]; ref2 = Edge[0][j]; 
                 Edge[0][ref1] = ref2; Edge[0][ref2] = ref1;
                 Edge[0][i] = -1; Edge[0][j] = -1;
-                VCE++; VCE++; CE--; sumce+=Edge[i][j];
+                VCE++; VCE++; CE--; sumce += Edge[i][j];
                 // CCE stuff ref1 and ref2
-                cout << "CCE situation "<<ref1<<" "<<ref2 << endl;
-                double ne=0.0, ce=0.0, cce=0.0, ie=0.0, nene=0.0, ccecce=0.0, ieie=0.0, nenen=0.0, cceccei=0.0, ieien=0.0, nenei=0.0, ieiei=0.0; 
-                double av=0.0, va=0.0;
-                for (int y = 1; y < n; y++) {if (Edge[0][y]==-1) { continue; }
-                        for (int z = 1 + y; z <= n; z++) {if (Edge[0][z] == -1) { continue; }                            
-                            if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
-                                ne+=Edge[y][z]; nene+=Edge[y][z]*Edge[y][z];
-                                cout << " neighbor edge " << y << " " << z << " and ne is "<< ne << " and nene is "<<nene<<endl;
-                            }
-                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
-                                cce+=Edge[y][z]; ccecce+=Edge[y][z]*Edge[y][z];
-                                cout << " connecting chosen edge " << y << " " << z <<" and cce is "<< cce << " and ccecce is "<<ccecce<< endl;
-                            }
-                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
-                                ie+=Edge[y][z]; ieie+=Edge[y][z]*Edge[y][z];
-                                cout << " independent edge " << y << " " << z << " and ie is "<< ie << " and ieie is "<<ieie<<endl;
-                            }
+                cout << "CCE situation " << ref1 << " " << ref2 << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                        if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                            ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
                         }
-                    } 
-                av= sumce+((0.5)*(1/(b-1+CE-VCE))*cce)+((1/(b-1+CE-VCE))*ne)+((2/(b-1+CE-VCE))*ie);
-                cout <<" the average for this situation is "<<av<<endl;
+                        if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                            cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        }
+                        if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                            ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        }
+                    }
+                }
+                av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+                cout << " the average for this situation is " << av << endl;
                 // reinitialized here
-                ne=0.0, ce=0.0, cce=0.0, ie=0.0, nene=0.0, ccecce=0.0, ieie=0.0, nenen=0.0, cceccei=0.0, ieien=0.0, nenei=0.0, ieiei=0.0, av=0.0, va=0.0;
-                Edge[ref1][ref2] = Edge[ref2][ref1] = ref3;
+                ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+               
                 Edge[0][ref1] = i; Edge[0][ref2] = j;
                 Edge[0][i] = ref1; Edge[0][j] = ref2;
                 ref1 = 0, ref2 = 0, ref3 = 0;
-                VCE--; VCE--; CE++; sumce-=Edge[i][j];
+                VCE--; VCE--; CE++; sumce -= Edge[i][j];
             }
             if (Edge[0][i] == 0 && Edge[0][j] != 0) {
-                sumce+=Edge[i][j];
-                ref2 = Edge[0][j]; ref3 = Edge[ref2][i];
-                Edge[i][ref2] = Edge[ref2][i] = Edge[i][j] + Edge[j][ref2];
+                sumce += Edge[i][j];
+                ref2 = Edge[0][j]; 
                 Edge[0][i] = ref2; Edge[0][ref2] = i;
                 Edge[0][j] = -1;
                 VCE++;
                 // CCE stuff ref1 and ref2
-                cout << "NE situation J " <<i<<" "<<ref2 << endl;
-                    for (int y = 1; y < n; y++) {
-                        if (Edge[0][y] == -1) { continue; }
-                        for (int z = 1 + y; z <= n; z++) {
-                             if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
-                                ne+=Edge[y][z]; nene+=Edge[y][z]*Edge[y][z];
-                                cout << " neighbor edge " << y << " " << z << " and ne is "<< ne << " and nene is "<<nene<<endl;
-                            }
-                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
-                                cce+=Edge[y][z]; ccecce+=Edge[y][z]*Edge[y][z];
-                                cout << " connecting chosen edge " << y << " " << z <<" and cce is "<< cce << " and ccecce is "<<ccecce<< endl;
-                            }
-                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
-                                ie+=Edge[y][z]; ieie+=Edge[y][z]*Edge[y][z];
-                                cout << " independent edge " << y << " " << z << " and ie is "<< ie << " and ieie is "<<ieie<<endl;
-                            }
+                cout << "NE situation J " << i << " " << ref2 << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                        if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                            ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
                         }
-                    } 
-                av= sumce+((0.5)*(1/(b-1+CE-VCE))*cce)+((1/(b-1+CE-VCE))*ne)+((2/(b-1+CE-VCE))*ie);
-                cout <<" the average for this situation is "<<av<<endl;
+                        if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                            cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        }
+                        if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                            ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        }
+                    }
+                }
+                av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+                cout << " the average for this situation is " << av << endl;
                 // reinitialized here
-                ne=0.0, ce=0.0, cce=0.0, ie=0.0, nene=0.0, ccecce=0.0, ieie=0.0, nenen=0.0, cceccei=0.0, ieien=0.0, nenei=0.0, ieiei=0.0, av=0.0, va=0.0;
-                Edge[i][ref2] = Edge[ref2][i] = ref3;
+                ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+              
                 Edge[0][i] = 0; Edge[0][ref2] = j;
                 Edge[0][j] = ref2;
                 ref2 = 0, ref3 = 0;
-                VCE--; sumce-=Edge[i][j];
+                VCE--; sumce -= Edge[i][j];
             }
             if (Edge[0][j] == 0 && Edge[0][i] != 0) {
-                sumce+=Edge[i][j];
-                ref2 = Edge[0][i]; ref3 = Edge[ref2][j];
-                Edge[j][ref2] = Edge[ref2][j] = Edge[i][j] + Edge[i][ref2];
+                sumce += Edge[i][j];
+                ref2 = Edge[0][i]; 
+               
                 Edge[0][j] = ref2; Edge[0][ref2] = j;
                 Edge[0][i] = -1;
                 VCE++;
                 // CCE stuff ref1 and ref2
-                cout << "NE situation I "<<ref2<<" "<<j << endl;
-                    for (int y = 1; y < n; y++) {
-                         if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
-                                ne+=Edge[y][z]; nene+=Edge[y][z]*Edge[y][z];
-                                cout << " neighbor edge " << y << " " << z << " and ne is "<< ne << " and nene is "<<nene<<endl;
-                            }
-                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
-                                cce+=Edge[y][z]; ccecce+=Edge[y][z]*Edge[y][z];
-                                cout << " connecting chosen edge " << y << " " << z <<" and cce is "<< cce << " and ccecce is "<<ccecce<< endl;
-                            }
-                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
-                                ie+=Edge[y][z]; ieie+=Edge[y][z]*Edge[y][z];
-                                cout << " independent edge " << y << " " << z << " and ie is "<< ie << " and ieie is "<<ieie<<endl;
-                            }
-                        }
-                    } 
-                av= sumce+((0.5)*(1/(b-1+CE-VCE))*cce)+((1/(b-1+CE-VCE))*ne)+((2/(b-1+CE-VCE))*ie);
-                cout <<" the average for this situation is "<<av<<endl;
-                // reinitialized here
-                ne=0.0, ce=0.0, cce=0.0, ie=0.0, nene=0.0, ccecce=0.0, ieie=0.0, nenen=0.0, cceccei=0.0, ieien=0.0, nenei=0.0, ieiei=0.0, av=0.0, va=0.0;
-                Edge[j][ref2] = Edge[ref2][j] = ref3;
-                Edge[0][j] = 0; Edge[0][ref2] = i;
-                Edge[0][i] = ref2;
-                ref2 = 0, ref3 = 0;
-                VCE--; sumce-=Edge[i][j];
+                cout << "NE situation I " << ref2 << " " << j << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                    if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                        ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                        cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                    }
+                    if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                        cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                        cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                    }
+                    if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                        ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                        cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                    }
+                }
             }
-            if (Edge[0][i] == 0 && Edge[0][j] == 0) {
-                sumce+=Edge[i][j];
-                Edge[0][i] = j; Edge[0][j] = i;
-                CE++; VCE++; VCE++;
-                // CCE stuff ref1 and ref2
-                cout << "IE situation " <<i<<" "<<j << endl;
-                    for (int y = 1; y < n; y++) {
-                        if (Edge[0][y] == -1) { continue; }
-                        for (int z = 1 + y; z <= n; z++) {
-                            if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
-                                ne+=Edge[y][z]; nene+=Edge[y][z]*Edge[y][z];
-                                cout << " neighbor edge " << y << " " << z << " and ne is "<< ne << " and nene is "<<nene<<endl;
-                            }
-                            if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y]==z || Edge[0][z]==y) {
-                                cce+=Edge[y][z]; ccecce+=Edge[y][z]*Edge[y][z];
-                                cout << " connecting chosen edge " << y << " " << z <<" and cce is "<< cce << " and ccecce is "<<ccecce<< endl;
-                            }
-                            if (Edge[0][y] == 0 && Edge[0][z] == 0) {
-                                ie+=Edge[y][z]; ieie+=Edge[y][z]*Edge[y][z];
-                                cout << " independent edge " << y << " " << z << " and ie is "<< ie << " and ieie is "<<ieie<<endl;
-                            }
-                        }
-                    } 
-                av= sumce+((0.5)*(1/(b-1+CE-VCE))*cce)+((1/(b-1+CE-VCE))*ne)+((2/(b-1+CE-VCE))*ie);
-                cout <<" the average for this situation is "<<av<<endl;
-                // reinitialized here
-                ne=0.0, ce=0.0, cce=0.0, ie=0.0, nene=0.0, ccecce=0.0, ieie=0.0, nenen=0.0, cceccei=0.0, ieien=0.0, nenei=0.0, ieiei=0.0, av=0.0, va=0.0;
-                Edge[0][i] = 0; Edge[0][j] = 0;
-                CE++; VCE--; VCE--; sumce-=Edge[i][j];
+            av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+            cout << " the average for this situation is " << av << endl;
+            // reinitialized here
+            ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+            Edge[0][j] = 0; Edge[0][ref2] = i;
+            Edge[0][i] = ref2;
+            ref2 = 0,
+            VCE--; sumce -= Edge[i][j];
+        }
+        if (Edge[0][i] == 0 && Edge[0][j] == 0) {
+            sumce += Edge[i][j];
+            Edge[0][i] = j; Edge[0][j] = i;
+            CE++; VCE++; VCE++;
+            // CCE stuff ref1 and ref2
+            cout << "IE situation " << i << " " << j << endl;
+            for (int y = 1; y < n; y++) {
+                if (Edge[0][y] == -1) { continue; }
+                for (int z = 1 + y; z <= n; z++) {
+                    if (Edge[0][z] == -1) { continue; }
+                    if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                        ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                        cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                    }
+                    if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                        cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                        cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                    }
+                    if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                        ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                        cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                    }
+                }
             }
+            av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+            cout << " the average for this situation is " << av << " and sumce "<<sumce<<" ce "<<CE<<" vce "<<VCE<<" cce "<<cce<<" ne "<<ne<<" ie "<<ie<<endl;
+            // reinitialized here
+            ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+            Edge[0][i] = 0; Edge[0][j] = 0;
+            CE--; VCE--; VCE--; sumce -= Edge[i][j];
         }
     }
-
-    return 0;
-
 }
 
+return 0;
+
+}
