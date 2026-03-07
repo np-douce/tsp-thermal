@@ -246,6 +246,15 @@ int main()
             }
             av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
             cout << " the average for this situation is " << av << " and sumce "<<sumce<<" ce "<<CE<<" vce "<<VCE<<" cce "<<cce<<" ne "<<ne<<" ie "<<ie<<endl;
+       for(c=1; c<n; c++){if(Edge[0][c]==-1){continue;}
+       for(g=c+1; g<=n; g++){if(Edge[0][g]==-1){continue;}
+        for(p=c; p<n; p++){if(Edge[0][p]==-1){continue;}
+          for(k=g+1; k<=n; k++){if(Edge[0][k]==-1){continue;}  
+             cout<<" Edge["<<c<<"]["<<g<<"]"<<" Edge["<<p<<"]["<<k<<"]"<<endl;
+                         } 
+                }
+                         } 
+                }
             // reinitialized here
             ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
             Edge[0][i] = 0; Edge[0][j] = 0;
@@ -257,3 +266,4 @@ int main()
 return 0;
 
 }
+
