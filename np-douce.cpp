@@ -109,7 +109,8 @@ int main()
     for (int i = 1; i <= n - 1; i++) {
         if (Edge[0][i] == -1) { continue; }
         for (int j = i + 1; j <= n; j++) {
-            double ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0;
+            double ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0;
+            double nene =0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
             double av = 0.0, va = 0.0;
             if (Edge[0][j] == -1 || Edge[0][i] == j || Edge[0][j] == i) { continue; }
             if (Edge[0][i] != 0 && Edge[0][j] != 0) {
@@ -141,8 +142,8 @@ int main()
                 av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
                 cout << " the average for this situation is " << av << endl;
                 // reinitialized here
-                ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
-
+                ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
                 Edge[0][ref1] = i; Edge[0][ref2] = j;
                 Edge[0][i] = ref1; Edge[0][j] = ref2;
                 ref1 = 0, ref2 = 0, ref3 = 0;
@@ -177,8 +178,8 @@ int main()
                 av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
                 cout << " the average for this situation is " << av << endl;
                 // reinitialized here
-                ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
-
+                ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
                 Edge[0][i] = 0; Edge[0][ref2] = j;
                 Edge[0][j] = ref2;
                 ref2 = 0, ref3 = 0;
@@ -214,7 +215,8 @@ int main()
                 av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
                 cout << " the average for this situation is " << av << endl;
                 // reinitialized here
-                ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                ne = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
                 Edge[0][j] = 0; Edge[0][ref2] = i;
                 Edge[0][i] = ref2;
                 ref2 = 0,
@@ -249,31 +251,78 @@ int main()
                 for (int c = 1; c < n; c++) {
                     if (Edge[0][c] == -1) { continue; }
                     for (int g = c + 1; g <= n; g++) {
-                        if (Edge[0][g] == -1||Edge[0][g]==c ||Edge[0][c]==g) { continue; }
+                        if (Edge[0][g] == -1 || Edge[0][g] == c || Edge[0][c] == g) { continue; }
                         for (int p = c; p < n; p++) {
                             if (Edge[0][p] == -1) { continue; }
-                            for (int k = 1+p; k <= n; k++) {
+                            for (int k = 1 + p; k <= n; k++) {
                                 if (Edge[0][k] == -1 || Edge[0][k] == p || Edge[0][p] == k) { continue; }
-                                if (Edge[0][c] != 0 && k==c || Edge[0][c]!=0&&p==c|| Edge[0][g] != 0 && k == g || Edge[0][g] != 0 && p == g) { continue; }
+                                if (Edge[0][c] != 0 && k == c || Edge[0][c] != 0 && p == c || Edge[0][g] != 0 && k == g || Edge[0][g] != 0 && p == g) { continue; }
                                 if (Edge[0][k] != 0 && k == c || Edge[0][k] != 0 && k == g || Edge[0][p] != 0 && p == c || Edge[0][p] != 0 && p == g) { continue; }
                                 if (Edge[0][c] == p && g == k || Edge[0][c] == k && g == p || Edge[0][g] == p && c == k || Edge[0][g] == k && c == p) { continue; }
                                 if (Edge[0][k] == c && g == p || Edge[0][k] == g && c == p || Edge[0][p] == c && g == k || Edge[0][p] == g && c == k) { continue; }
-								if (Edge[0][c] == p && Edge[0][g] == k || Edge[0][c] == k && Edge[0][g] == p) { continue; }
-                                if (p == c && k <= g ) { continue; }
-                                cout << " Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                if (Edge[0][c] == p && Edge[0][g] == k || Edge[0][c] == k && Edge[0][g] == p) { continue; }
+                                if (p == c && k <= g) { continue; }
+                                // standadiation stuff begin
+                                if (Edge[0][k] != 0 && Edge[0][p] != 0 && Edge[0][c] != 0 && Edge[0][g] != 0) {
+                                    cout << "cceccei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g == k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g == p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c == k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c == p) {
+                                    cout << "nenen Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g != k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g != p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c != k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c != p) {
+                                    cout << "nenei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0) {
+                                    if (c == k || c == p || g == k || g == p) {
+                                        cout << "ieien Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                    else {
+                                        cout << "ieiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    cout << "ccenei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    cout << "cceiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0) {
+                                    if (c == p || c == k || g == k || g == p) {
+                                        cout << "neien Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                    else {
+                                        cout << "neiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                }
+                            }
+                                // standard deviation stuff end
                             }
                         }
                     }
+                    // reinitialized here
+                    ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                    nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+                    Edge[0][i] = 0; Edge[0][j] = 0;
+                    CE--; VCE--; VCE--; sumce -= Edge[i][j];
                 }
-                // reinitialized here
-                ne = 0.0, ce = 0.0, cce = 0.0, ie = 0.0, nene = 0.0, ccecce = 0.0, ieie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
-                Edge[0][i] = 0; Edge[0][j] = 0;
-                CE--; VCE--; VCE--; sumce -= Edge[i][j];
             }
         }
+
+        return 0;
+
     }
 
-    return 0;
-
-}
 
