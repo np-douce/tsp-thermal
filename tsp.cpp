@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 #include <cmath>
-
+#include <string>
 int main()
 {
     int n;
@@ -45,7 +45,7 @@ int main()
         }
         cout << endl;
     }
-    double sum = 0.0, average = 0, b = n;
+    double sum = 0.0, average = 0, b = n, beta=0.05;
 
     for (int i = 1; i < n; i++)
     {
@@ -102,8 +102,8 @@ int main()
 
     double stand = ((2.0 / (b - 1)) * (S_self)) + ((4.0 / ((b - 1) * (b - 2))) * (S_neighbor + (2 * S_non_neighbor))) - (average * average);
     cout << "the standard deviation = " << stand << " " << sqrt(stand) << endl;
-    double entropy = lgamma(n) - log(2.0);
-    cout << "entropy " << entropy << "states " << exp(entropy) << endl;
+    double entropy = lgamma(n) - log(2.0), partition=exp(entropy-(beta*average)+((beta)*(beta)*(0.5)*stand));
+    cout << "entropy " << entropy << "partition " << partition; << endl;
     int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce = 0.0;
     double ref3; Edge[0][1] = 2;Edge[0][2] = 1; CE = 1; VCE = 2; sumce = Edge[1][2];
     for (int i = 1; i <= n - 1; i++) {
@@ -345,26 +345,12 @@ int main()
                         )
 
                     - ((av - sumce) * (av - sumce));
-                cout << "The standard deviation is " << sqrt(va) << endl
-                    << " ccecce is " << ccecce << endl
-                    << " cceccei is " << cceccei << endl
-                    << " nene is " << nene << endl
-                    << " ieie is " << ieie << endl
-                    << " nenen is " << nenen << endl
-                    << " ieien is " << ieien << endl
-                    << " nenei is " << nenei << endl
-                    << " ieiei is " << ieiei << endl
-                    << " ccenei is " << ccenei << endl
-                    << " cceiei is " << cceiei << endl
-                    << " neien is " << neien << endl
-                    << " neiei is " << neiei << endl
-                    << " av is " << av << endl
-                    << " CE is " << CE << endl
-                    << " VCE is " << VCE << endl
-                    << " sumce is " << sumce << endl;
-                    
-
-
+                cout << "The standard deviation is " << sqrt(va) << endl;
+                 double entro = lgamma(denom1) + (log(2.0) * (CE-1)); double min=0.0; int min1=0, min2=0;
+                double z = exp(entro-(beta*av)+((beta)*(beta)*(0.5)*va));
+                if(z>=min){
+                   min 
+                }
                 // reinitialized here
                 ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
                 nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
