@@ -120,7 +120,7 @@ int main()
                 ref1 = Edge[0][i]; ref2 = Edge[0][j];
                 Edge[0][ref1] = ref2; Edge[0][ref2] = ref1;
                 Edge[0][i] = -1; Edge[0][j] = -1;
-                VCE++; VCE++; CE--; sumce += Edge[i][j];
+                 CE--; sumce += Edge[i][j];
                 // CCE stuff ref1 and ref2
                 cout << "CCE situation " << ref1 << " " << ref2 << endl;
                 for (int y = 1; y < n; y++) {
@@ -251,7 +251,7 @@ int main()
                 Edge[0][ref1] = i; Edge[0][ref2] = j;
                 Edge[0][i] = ref1; Edge[0][j] = ref2;
                 ref1 = 0, ref2 = 0, ref3 = 0;
-                VCE--; VCE--; CE++; sumce -= Edge[i][j];
+                 CE++; sumce -= Edge[i][j];
             }
             if (Edge[0][i] == 0 && Edge[0][j] != 0) {
                 sumce += Edge[i][j];
@@ -669,9 +669,18 @@ int main()
     }
 
     cout << "The biggetst probability is " << min << " at  Edge[" << min1 << "][" << min2 << "]." << endl;
+	if(Edge[0][min1]!=0&&Edge[0][min2]!=0){
+		Edge[0][min1]=-1; Edge[0][min2]=-1; CE--; sumce +=Edge[min1][min2];
+	}
+	if(){}
+	if(){}
+	if(Edge[0][min1]==0&&Edge[0][min2]==0){
+		Edge[0][min1]=min2; Edge[0][min2]=min1; VCE++; VCE++; CE++; sumce += Edge[min1][min2]
+	}
     return 0;
 
 }
+
 
 
 
