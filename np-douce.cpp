@@ -1,13 +1,15 @@
 #include <iostream>
 using namespace std;
 #include <cmath>
-
+#include <string>
 int main()
 {
     int n;
+    double beta;
     cout << "Enter number of vertices (max 50): ";
     cin >> n;
-
+	cout << "Enter beta value: "<<endl;
+	cin >> beta;
     if (n < 1 || n > 50)
     {
         cout << "Invalid n.\n";
@@ -102,15 +104,15 @@ int main()
 
     double stand = ((2.0 / (b - 1)) * (S_self)) + ((4.0 / ((b - 1) * (b - 2))) * (S_neighbor + (2 * S_non_neighbor))) - (average * average);
     cout << "the standard deviation = " << stand << " " << sqrt(stand) << endl;
-    double entropy = lgamma(n) - log(2.0);
-    cout << "entropy " << entropy << "states " << exp(entropy) << endl;
-    int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce = 0.0;
-    double ref3; Edge[0][1] = 2;Edge[0][2] = 1;Edge[0][3] = -1; Edge[1][2] = Edge[2][1] = Edge[1][3] + Edge[2][3]; CE = 1; VCE = 3; sumce = Edge[1][2];
+    double entropy = lgamma(n) - log(2.0), partition = entropy - (beta * average) + ((beta) * (beta) * (0.5) * stand);
+    cout << "entropy " << entropy << "partition " << partition << endl;
+    int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce = 0.0;  double min = 0.0; int min1 = 0, min2 = 0;
+    double ref3; 
     for (int i = 1; i <= n - 1; i++) {
         if (Edge[0][i] == -1) { continue; }
         for (int j = i + 1; j <= n; j++) {
             double ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0;
-            double nene =0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+            double nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
             double av = 0.0, va = 0.0, ce = 0.0;
             if (Edge[0][j] == -1 || Edge[0][i] == j || Edge[0][j] == i) { continue; }
             if (Edge[0][i] != 0 && Edge[0][j] != 0) {
@@ -127,28 +129,130 @@ int main()
                         if (Edge[0][z] == -1) { continue; }
                         if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
                             ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
-                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+
                         }
                         if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
                             cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
-                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+
                         }
                         if (Edge[0][y] == 0 && Edge[0][z] == 0) {
                             ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
-                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+
                         }
                     }
                 }
                 av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
                 cout << " the average for this situation is " << av << endl;
+                for (int c = 1; c < n; c++) {
+                    if (Edge[0][c] == -1) { continue; }
+                    for (int g = c + 1; g <= n; g++) {
+                        if (Edge[0][g] == -1 || Edge[0][g] == c || Edge[0][c] == g) { continue; }
+                        for (int p = c; p < n; p++) {
+                            if (Edge[0][p] == -1) { continue; }
+                            for (int k = 1 + p; k <= n; k++) {
+                                if (Edge[0][k] == -1 || Edge[0][k] == p || Edge[0][p] == k) { continue; }
+                                if (Edge[0][c] != 0 && k == c || Edge[0][c] != 0 && p == c || Edge[0][g] != 0 && k == g || Edge[0][g] != 0 && p == g) { continue; }
+                                if (Edge[0][k] != 0 && k == c || Edge[0][k] != 0 && k == g || Edge[0][p] != 0 && p == c || Edge[0][p] != 0 && p == g) { continue; }
+                                if (Edge[0][c] == p && g == k || Edge[0][c] == k && g == p || Edge[0][g] == p && c == k || Edge[0][g] == k && c == p) { continue; }
+                                if (Edge[0][k] == c && g == p || Edge[0][k] == g && c == p || Edge[0][p] == c && g == k || Edge[0][p] == g && c == k) { continue; }
+                                if (Edge[0][c] == p && Edge[0][g] == k || Edge[0][c] == k && Edge[0][g] == p) { continue; }
+                                if (p == c && k <= g) { continue; }
+                                // standadiation stuff begin
+                                if (Edge[0][k] != 0 && Edge[0][p] != 0 && Edge[0][c] != 0 && Edge[0][g] != 0) {
+                                    cceccei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g == k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g == p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c == k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c == p) {
+                                    nenen += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g != k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g != p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c != k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c != p) {
+                                    nenei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0) {
+                                    if (c == k || c == p || g == k || g == p) {
+                                        ieien += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                    else {
+                                        ieiei += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    ccenei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    cceiei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0) {
+                                    if (c == p || c == k || g == k || g == p) {
+                                        neien += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                    else {
+                                        neiei += Edge[c][g] * Edge[p][k];
+
+
+                                    }
+                                }
+                            }
+
+                            // standard deviation stuff end
+                        }
+                    }
+                }
+                double denom1 = (b - 1 + CE - VCE);
+                double denom2 = (b - 2 + CE - VCE);
+
+                va =
+                    (0.5 / denom1) * ccecce +
+                    (1.0 / denom1) * nene +
+                    (2.0 / denom1) * ieie +
+
+                    (1.0 / (denom1 * denom2)) *
+                    (
+                        0.5 * cceccei +
+                        nenen +
+                        2 * nenei +
+                        4 * ieien +
+                        8 * ieiei +
+                        ccenei +
+                        2 * cceiei +
+                        2 * neien +
+                        4 * neiei
+                        )
+
+                    - ((av - sumce) * (av - sumce));
+                double entro = lgamma(denom1) + (log(2.0) * (CE - 1));
+                double z = entro - (beta * av) + ((beta) * (beta) * (0.5) * va);
+                if (z >= min) {
+                    min = z; min1 = i; min2 = j;
+                }
                 // reinitialized here
-                 ce = 0.0, ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                ce = 0.0, ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
                 nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
                 Edge[0][ref1] = i; Edge[0][ref2] = j;
                 Edge[0][i] = ref1; Edge[0][j] = ref2;
                 ref1 = 0, ref2 = 0, ref3 = 0;
                 VCE--; VCE--; CE++; sumce -= Edge[i][j];
-            } 
+            }
             if (Edge[0][i] == 0 && Edge[0][j] != 0) {
                 sumce += Edge[i][j];
                 ref2 = Edge[0][j];
@@ -163,20 +267,122 @@ int main()
                         if (Edge[0][z] == -1) { continue; }
                         if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
                             ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
-                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                           
                         }
                         if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
                             cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
-                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        
                         }
                         if (Edge[0][y] == 0 && Edge[0][z] == 0) {
                             ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
-                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                     
                         }
                     }
                 }
                 av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
                 cout << " the average for this situation is " << av << endl;
+                for (int c = 1; c < n; c++) {
+                    if (Edge[0][c] == -1) { continue; }
+                    for (int g = c + 1; g <= n; g++) {
+                        if (Edge[0][g] == -1 || Edge[0][g] == c || Edge[0][c] == g) { continue; }
+                        for (int p = c; p < n; p++) {
+                            if (Edge[0][p] == -1) { continue; }
+                            for (int k = 1 + p; k <= n; k++) {
+                                if (Edge[0][k] == -1 || Edge[0][k] == p || Edge[0][p] == k) { continue; }
+                                if (Edge[0][c] != 0 && k == c || Edge[0][c] != 0 && p == c || Edge[0][g] != 0 && k == g || Edge[0][g] != 0 && p == g) { continue; }
+                                if (Edge[0][k] != 0 && k == c || Edge[0][k] != 0 && k == g || Edge[0][p] != 0 && p == c || Edge[0][p] != 0 && p == g) { continue; }
+                                if (Edge[0][c] == p && g == k || Edge[0][c] == k && g == p || Edge[0][g] == p && c == k || Edge[0][g] == k && c == p) { continue; }
+                                if (Edge[0][k] == c && g == p || Edge[0][k] == g && c == p || Edge[0][p] == c && g == k || Edge[0][p] == g && c == k) { continue; }
+                                if (Edge[0][c] == p && Edge[0][g] == k || Edge[0][c] == k && Edge[0][g] == p) { continue; }
+                                if (p == c && k <= g) { continue; }
+                                // standadiation stuff begin
+                                if (Edge[0][k] != 0 && Edge[0][p] != 0 && Edge[0][c] != 0 && Edge[0][g] != 0) {
+                                    cceccei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g == k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g == p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c == k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c == p) {
+                                    nenen += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g != k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g != p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c != k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c != p) {
+                                    nenei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0) {
+                                    if (c == k || c == p || g == k || g == p) {
+                                        ieien += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                    else {
+                                        ieiei += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    ccenei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    cceiei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0) {
+                                    if (c == p || c == k || g == k || g == p) {
+                                        neien += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                    else {
+                                        neiei += Edge[c][g] * Edge[p][k];
+
+
+                                    }
+                                }
+                            }
+
+                            // standard deviation stuff end
+                        }
+                    }
+                }
+                double denom1 = (b - 1 + CE - VCE);
+                double denom2 = (b - 2 + CE - VCE);
+
+                va =
+                    (0.5 / denom1) * ccecce +
+                    (1.0 / denom1) * nene +
+                    (2.0 / denom1) * ieie +
+
+                    (1.0 / (denom1 * denom2)) *
+                    (
+                        0.5 * cceccei +
+                        nenen +
+                        2 * nenei +
+                        4 * ieien +
+                        8 * ieiei +
+                        ccenei +
+                        2 * cceiei +
+                        2 * neien +
+                        4 * neiei
+                        )
+
+                    - ((av - sumce) * (av - sumce));
+                double entro = lgamma(denom1) + (log(2.0) * (CE - 1));
+                double z = entro - (beta * av) + ((beta) * (beta) * (0.5) * va);
+                if (z >= min) {
+                    min = z; min1 = i; min2 = j;
+                }
                 // reinitialized here
                 ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
                 nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
@@ -200,22 +406,124 @@ int main()
                         if (Edge[0][z] == -1) { continue; }
                         if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
                             ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
-                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+
                         }
                         if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
                             cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
-                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+
                         }
                         if (Edge[0][y] == 0 && Edge[0][z] == 0) {
                             ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
-                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+
                         }
                     }
                 }
                 av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
                 cout << " the average for this situation is " << av << endl;
+                for (int c = 1; c < n; c++) {
+                    if (Edge[0][c] == -1) { continue; }
+                    for (int g = c + 1; g <= n; g++) {
+                        if (Edge[0][g] == -1 || Edge[0][g] == c || Edge[0][c] == g) { continue; }
+                        for (int p = c; p < n; p++) {
+                            if (Edge[0][p] == -1) { continue; }
+                            for (int k = 1 + p; k <= n; k++) {
+                                if (Edge[0][k] == -1 || Edge[0][k] == p || Edge[0][p] == k) { continue; }
+                                if (Edge[0][c] != 0 && k == c || Edge[0][c] != 0 && p == c || Edge[0][g] != 0 && k == g || Edge[0][g] != 0 && p == g) { continue; }
+                                if (Edge[0][k] != 0 && k == c || Edge[0][k] != 0 && k == g || Edge[0][p] != 0 && p == c || Edge[0][p] != 0 && p == g) { continue; }
+                                if (Edge[0][c] == p && g == k || Edge[0][c] == k && g == p || Edge[0][g] == p && c == k || Edge[0][g] == k && c == p) { continue; }
+                                if (Edge[0][k] == c && g == p || Edge[0][k] == g && c == p || Edge[0][p] == c && g == k || Edge[0][p] == g && c == k) { continue; }
+                                if (Edge[0][c] == p && Edge[0][g] == k || Edge[0][c] == k && Edge[0][g] == p) { continue; }
+                                if (p == c && k <= g) { continue; }
+                                // standadiation stuff begin
+                                if (Edge[0][k] != 0 && Edge[0][p] != 0 && Edge[0][c] != 0 && Edge[0][g] != 0) {
+                                    cceccei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g == k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g == p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c == k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c == p) {
+                                    nenen += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g != k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g != p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c != k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c != p) {
+                                    nenei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0) {
+                                    if (c == k || c == p || g == k || g == p) {
+                                        ieien += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                    else {
+                                        ieiei += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    ccenei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    cceiei += Edge[c][g] * Edge[p][k];
+
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0) {
+                                    if (c == p || c == k || g == k || g == p) {
+                                        neien += Edge[c][g] * Edge[p][k];
+
+                                    }
+                                    else {
+                                        neiei += Edge[c][g] * Edge[p][k];
+
+
+                                    }
+                                }
+                            }
+
+                            // standard deviation stuff end
+                        }
+                    }
+                }
+                double denom1 = (b - 1 + CE - VCE);
+                double denom2 = (b - 2 + CE - VCE);
+
+                va =
+                    (0.5 / denom1) * ccecce +
+                    (1.0 / denom1) * nene +
+                    (2.0 / denom1) * ieie +
+
+                    (1.0 / (denom1 * denom2)) *
+                    (
+                        0.5 * cceccei +
+                        nenen +
+                        2 * nenei +
+                        4 * ieien +
+                        8 * ieiei +
+                        ccenei +
+                        2 * cceiei +
+                        2 * neien +
+                        4 * neiei
+                        )
+
+                    - ((av - sumce) * (av - sumce));
+                double entro = lgamma(denom1) + (log(2.0) * (CE - 1));
+                double z = entro - (beta * av) + ((beta) * (beta) * (0.5) * va);
+                if (z  >= min) {
+                    min = z ; min1 = i; min2 = j;
+                }
                 // reinitialized here
-                 ne = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                ne = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
                 nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
                 Edge[0][j] = 0; Edge[0][ref2] = i;
                 Edge[0][i] = ref2;
@@ -234,15 +542,15 @@ int main()
                         if (Edge[0][z] == -1) { continue; }
                         if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
                             ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
-                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                       
                         }
                         if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
                             cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
-                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+       
                         }
                         if (Edge[0][y] == 0 && Edge[0][z] == 0) {
                             ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
-                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        
                         }
                     }
                 }
@@ -264,79 +572,106 @@ int main()
                                 if (p == c && k <= g) { continue; }
                                 // standadiation stuff begin
                                 if (Edge[0][k] != 0 && Edge[0][p] != 0 && Edge[0][c] != 0 && Edge[0][g] != 0) {
-                                    cceccei += Edge[c][g]*Edge[p][k];
-                                    cout << "cceccei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    cceccei += Edge[c][g] * Edge[p][k];
+
                                 }
                                 if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g == k ||
                                     Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g == p ||
                                     Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c == k ||
                                     Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c == p) {
-                                    nenen += Edge[c][g]*Edge[p][k];
-                                    cout << "nenen Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    nenen += Edge[c][g] * Edge[p][k];
+
                                 }
                                 if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g != k ||
                                     Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g != p ||
                                     Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c != k ||
                                     Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c != p) {
-                                    nenei += Edge[c][g]*Edge[p][k];
-                                    cout << "nenei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    nenei += Edge[c][g] * Edge[p][k];
+
                                 }
                                 if (Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0) {
                                     if (c == k || c == p || g == k || g == p) {
-                                        ieien += Edge[c][g]*Edge[p][k];
-                                        cout << "ieien Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                        ieien += Edge[c][g] * Edge[p][k];
+
                                     }
                                     else {
-                                        ieiei += Edge[c][g]*Edge[p][k];
-                                        cout << "ieiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                        ieiei += Edge[c][g] * Edge[p][k];
+
                                     }
                                 }
                                 if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 ||
                                     Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
                                     Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] != 0 ||
                                     Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
-                                    ccenei += Edge[c][g]*Edge[p][k];
-                                    cout << "ccenei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    ccenei += Edge[c][g] * Edge[p][k];
+
                                 }
                                 if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
                                     Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
-                                    cceiei += Edge[c][g]*Edge[p][k];
-                                    cout << "cceiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    cceiei += Edge[c][g] * Edge[p][k];
+
                                 }
                                 if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
                                     Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
                                     Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
                                     Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0) {
                                     if (c == p || c == k || g == k || g == p) {
-                                        neien += Edge[c][g]*Edge[p][k];
-                                        cout << "neien Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                        neien += Edge[c][g] * Edge[p][k];
+
                                     }
-                                    else { 
-                                        neiei += Edge[c][g]*Edge[p][k];
-                                        cout << "neiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    else {
+                                        neiei += Edge[c][g] * Edge[p][k];
+
+
                                     }
                                 }
                             }
-                            va = ((1/2)*(1 / (b - 1 + CE - VCE))*ccecce)+ ((1 / (b - 1 + CE - VCE))*nene)+((2 / (b - 1 + CE - VCE))*ieie)
-                                +(1 / ((b - 1 + CE - VCE)*(b-2+CE-VCE)))*(((1/2)*cceccei)+nenen+(2*nenei)+(4*ieien)+(8*ieiei)+ccenei+(2*cceiei)+(2*neien)+(4*neiei))
-                                -((av-sumce)*(av-sumce));
-                            cout<<"The standard deviation is "<<sqrt(va)<<endl;
-                                // standard deviation stuff end
-                            }
+
+                            // standard deviation stuff end
                         }
                     }
-                    // reinitialized here
-                    ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
-                    nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
-                    Edge[0][i] = 0; Edge[0][j] = 0;
-                    CE--; VCE--; VCE--; sumce -= Edge[i][j];
                 }
+                double denom1 = (b - 1 + CE - VCE);
+                double denom2 = (b - 2 + CE - VCE);
+
+                va =
+                    (0.5 / denom1) * ccecce +
+                    (1.0 / denom1) * nene +
+                    (2.0 / denom1) * ieie +
+
+                    (1.0 / (denom1 * denom2)) *
+                    (
+                        0.5 * cceccei +
+                        nenen +
+                        2 * nenei +
+                        4 * ieien +
+                        8 * ieiei +
+                        ccenei +
+                        2 * cceiei +
+                        2 * neien +
+                        4 * neiei
+                        )
+
+                    - ((av - sumce) * (av - sumce));
+                double entro = lgamma(denom1) + (log(2.0) * (CE - 1));
+                double z = entro - (beta * av) + ((beta) * (beta) * (0.5) * va);
+                if (z >= min) {
+                    min = z; min1 = i; min2 = j;
+                }
+
+                // reinitialized here
+                ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+                Edge[0][i] = 0; Edge[0][j] = 0;
+                CE--; VCE--; VCE--; sumce -= Edge[i][j];
             }
         }
-
-        return 0;
-
     }
+
+    cout << "The biggetst probability is " << min << " at  Edge[" << min1 << "][" << min2 << "]." << endl;
+    return 0;
+
+}
 
 
 
