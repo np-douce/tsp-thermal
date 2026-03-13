@@ -670,16 +670,24 @@ int main()
 
     cout << "The biggetst probability is " << min << " at  Edge[" << min1 << "][" << min2 << "]." << endl;
 	if(Edge[0][min1]!=0&&Edge[0][min2]!=0){
+		Edge[0][Edge[0][min1]]=Edge[0][Edge[0][min2]]; Edge[0][Edge[0][min2]]=Edge[0][Edge[0][min1]];
 		Edge[0][min1]=-1; Edge[0][min2]=-1; CE--; sumce +=Edge[min1][min2];
 	}
-	if(){}
-	if(){}
+	if(Edge[0][min1]!=0&&Edge[0][min2]==0){
+		Edge[0][min2]=Edge[0][min1]; Edge[0][Edge[0][min1]]=min2;
+		Edge[0][min1]=-1; VCE++; sumce += Edge[min1][min2];
+	}
+	if(Edge[0][min1]==0&&Edge[0][min2]!=0){
+	Edge[0][min1]=Edge[0][min1]; Edge[0][Edge[0][min1]]=min2;
+		Edge[0][min1]=-1; VCE++; sumce += Edge[min1][min2];
+	}
 	if(Edge[0][min1]==0&&Edge[0][min2]==0){
 		Edge[0][min1]=min2; Edge[0][min2]=min1; VCE++; VCE++; CE++; sumce += Edge[min1][min2]
 	}
     return 0;
 
 }
+
 
 
 
