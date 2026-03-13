@@ -108,6 +108,7 @@ int main()
     cout << "entropy " << entropy << "partition " << partition << endl;
     int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce = 0.0;  double min = 0.0; int min1 = 0, min2 = 0;
     double ref3; 
+	do{
     for (int i = 1; i <= n - 1; i++) {
         if (Edge[0][i] == -1) { continue; }
         for (int j = i + 1; j <= n; j++) {
@@ -678,15 +679,16 @@ int main()
 		Edge[0][min1]=-1; VCE++; sumce += Edge[min1][min2];
 	}
 	if(Edge[0][min1]==0&&Edge[0][min2]!=0){
-	Edge[0][min1]=Edge[0][min1]; Edge[0][Edge[0][min1]]=min2;
-		Edge[0][min1]=-1; VCE++; sumce += Edge[min1][min2];
+	Edge[0][min1]=Edge[0][min2]; Edge[0][Edge[0][min2]]=min1;
+		Edge[0][min2]=-1; VCE++; sumce += Edge[min1][min2];
 	}
 	if(Edge[0][min1]==0&&Edge[0][min2]==0){
 		Edge[0][min1]=min2; Edge[0][min2]=min1; VCE++; VCE++; CE++; sumce += Edge[min1][min2]
-	}
+	}} while(VCE<n)
     return 0;
 
 }
+
 
 
 
