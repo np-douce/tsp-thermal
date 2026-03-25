@@ -36,17 +36,6 @@ int main()
             Edge[j][i] = Edge[i][j];
         }
     }
-
-    // Optional: print matrix to verify
-    cout << "\nAdjacency Matrix:\n";
-    for (int i = 1; i <= n; i++)
-    {
-        for (int j = 1; j <= n; j++)
-        {
-            cout << Edge[i][j] << "\t";
-        }
-        cout << endl;
-    }
     double sum = 0.0, average = 0, b = n;
 
     for (int i = 1; i < n; i++)
