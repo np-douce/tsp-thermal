@@ -1,358 +1,368 @@
 #include <iostream>
-
-
 using namespace std;
-
-
+#include <cmath>
+#include <string>
 int main()
 {
-	cout << "THIS IS A TSP SOLVER! \n"
-		<< "                    by Michel Seraphin"
-		<< "\n\nFirst, how many vertex does your graph have?\n";
+    int n;
+    cout << "Enter number of vertices (max 50): ";
+    cin >> n;
 
-	int n, np;
-	cin >> n;
-	if (n % 2 == 0) {
-	np=((n-4)/2)	;
-	}
-	else
-	{
-		np=((n-3)/2);
-	}
-	int e = ((n * (n - 1)) / 2);
-	cout << "With a vertex of " << n << " and that the graph is undirected and complete, you should have " << e << " unique edges.\n";
-	cout << "Now enter the weights in the following order requested bellow.\n";
-	double Edges[50][50];
-	for (int h = 1; h <= n - 1; h++)
-	{
-		for (int t = 2; t <= n; t++)
-		{
-			if (h >= t)
-			{
-				continue;
-			}
-			cout << "E(" << h <<")("<< t << ")   ";
-			cin >> Edges[h][t];
+    if (n < 1 || n > 50)
+    {
+        cout << "Invalid n.\n";
+        return 0;
+    }
 
-		}
+    double Edge[50][50];
 
+    // Initialize matrix to 0
+    for (int i = 0; i < 50; i++)
+        for (int j = 0; j < 50; j++)
+            Edge[i][j] = 0.0;
 
-	}
-	double Euler = 0, sumthree = 0, sumtwo = 0, sumislands = 0; double sumfour = 0, sumfive = 0, sumislands2=0;
-	for (int p = 1; p <= n - 1; p++)
-	{
-		for (int q = 2; q <= n; q++)
-		{
-			if (p >= q)
-			{
-				continue;
-			}
-			Euler += Edges[p][q];
-		}
-	}
-	double b = n;
-	double average = ((2 * Euler) / (b - 1));
-	cout << "\nThe average hamiltonian tour length is " << average
-		<< " and \nthe average tour passing through each vertex is posted bellow.";
-	int one = 1, kl = 1, three = 3, two = three - 1, yu, po, ri, mi, ju[50], se[50], gh = 1;;
-	double min = average, mini = average;
+    cout << "Enter weights for each edge (i < j):\n";
 
-	do
-	{
-		if (one > two)
-		{
-			Edges[one][two] = Edges[two][one];
-		}if (one > three)
-		{
-			Edges[one][three] = Edges[three][one];
-		}
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = i + 1; j <= n; j++)
+        {
+            cout << "Weight of edge (" << i << "," << j << "): ";
+            cin >> Edge[i][j];
 
-		double wap = Edges[one][two] + Edges[one][three];
+            // Make symmetric
+            Edge[j][i] = Edge[i][j];
+        }
+    }
 
+    // Optional: print matrix to verify
+    cout << "\nAdjacency Matrix:\n";
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            cout << Edge[i][j] << "\t";
+        }
+        cout << endl;
+    }
+    double sum = 0.0, average = 0, b = n, beta=0.05;
 
-		for (int neitwo = 1; neitwo <= n; neitwo++)
-		{
-			if (neitwo < two)
-			{
-				Edges[two][neitwo] = Edges[neitwo][two];
-			}
-			if (neitwo == two || neitwo == three || neitwo == one)
-			{
-				continue;
-			}
-			sumtwo += Edges[two][neitwo];
+    for (int i = 1; i < n; i++)
+    {
+        for (int j = i + 1; j <= n; j++)
+        {
+            sum += Edge[i][j];
+        }
+    }
+    average = (2.0 / (b - 1)) * sum;
+    cout << "the average  = " << average << endl;
 
-		}
-		for (int nei = 1; nei <= n; nei++)
-		{
-			if (nei < three)
-			{
-				Edges[three][nei] = Edges[nei][three];
-			}
-			if (nei == three || nei == two || nei == one)
-			{
-				continue;
-			}
-			sumthree += Edges[three][nei];
-		}
-		for (int x = 1; x <= n - 1; x++)
-		{
-			for (int v = 2; v <= n; v++)
-			{
-				if (x >= v || x == two || v == three || x == three || v == two || one == x || one == v)
-				{
-					continue;
-				}
-				sumislands += Edges[x][v];
-			}
-		}
+    double S_self = 0.0;
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = i + 1; j <= n; j++)
+        {
+            S_self += Edge[i][j] * Edge[i][j];
+        }
+    }
 
-		double wapaverage[1176]; 
-		wapaverage[gh] = wap + (1 / (b - 3)) * (sumtwo + sumthree) + ((2 / (b - 3)) * sumislands);
+    double S_neighbor = 0.0;
 
 
-		cout << "\n\nAverage of going through vertex V" << one << " via E(" << one << ")(" << two << ") and E(" << one << ")(" << three << ") is ("
-			<< wap << ")" << "+(1/(" << (n - 3)
-			<< "))*(" << sumtwo + sumthree << ")+(2/(" << n - 3 << ")*(" << sumislands << ")="
-			<< wapaverage[gh];
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            for (int k = j + 1; k <= n; k++)
+            {
+                if (i != j && i != k) {
+                    S_neighbor += Edge[i][j] * Edge[i][k];
+                }
+            }
+        }
+    }
 
-		if (wapaverage[gh] <= mini) {
-			mini = wapaverage[gh];
-			mi = one; ju[1] = two; se[1] = three;
+    double S_non_neighbor = 0.0;
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = i + 1; j <= n; j++)
+        {
+            for (int k = i + 1; k <= n; k++)
+            {
+                for (int l = k + 1; l <= n; l++)
+                {
+                    if (i == k || j == l || i == l || j == k) { continue; }
+                    else {
+                        S_non_neighbor += Edge[i][j] * Edge[k][l];
+                    }
+                }
+            }
+        }
+    }
 
-		}
-		int repeat = 1;
-			for (int repeated = 1; repeated <= gh - 1; repeated++) {
-				if (wapaverage[repeated] == wapaverage[gh]) {
-					repeat++;
-				}
-	}
-			if (repeat > 1) {
-				cout << "         this value has repeated " << repeat << " times so far.";
-			}
-		if (min >= wapaverage[gh]) {
-			yu = one, po = two, ri = three;
-			min = wapaverage[gh];
-		}
+    double stand = ((2.0 / (b - 1)) * (S_self)) + ((4.0 / ((b - 1) * (b - 2))) * (S_neighbor + (2 * S_non_neighbor))) - (average * average);
+    cout << "the standard deviation = " << stand << " " << sqrt(stand) << endl;
+    double entropy = lgamma(n) - log(2.0), partition=exp(entropy-(beta*average)+((beta)*(beta)*(0.5)*stand));
+    cout << "entropy " << entropy << "partition " << partition; << endl;
+    int ref1 = 0, ref2 = 0, CE = 0, VCE = 0, sumce = 0.0;
+    double ref3; Edge[0][1] = 2;Edge[0][2] = 1; CE = 1; VCE = 2; sumce = Edge[1][2];
+    for (int i = 1; i <= n - 1; i++) {
+        if (Edge[0][i] == -1) { continue; }
+        for (int j = i + 1; j <= n; j++) {
+            double ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0;
+            double nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+            double av = 0.0, va = 0.0, ce = 0.0;
+            if (Edge[0][j] == -1 || Edge[0][i] == j || Edge[0][j] == i) { continue; }
+            if (Edge[0][i] != 0 && Edge[0][j] != 0) {
+                sumce += Edge[i][j];
+                ref1 = Edge[0][i]; ref2 = Edge[0][j];
+                Edge[0][ref1] = ref2; Edge[0][ref2] = ref1;
+                Edge[0][i] = -1; Edge[0][j] = -1;
+                VCE++; VCE++; CE--; sumce += Edge[i][j];
+                // CCE stuff ref1 and ref2
+                cout << "CCE situation " << ref1 << " " << ref2 << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                        if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                            ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                        }
+                        if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                            cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        }
+                        if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                            ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        }
+                    }
+                }
+                av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+                cout << " the average for this situation is " << av << endl;
+                // reinitialized here
+                ce = 0.0, ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+                Edge[0][ref1] = i; Edge[0][ref2] = j;
+                Edge[0][i] = ref1; Edge[0][j] = ref2;
+                ref1 = 0, ref2 = 0, ref3 = 0;
+                VCE--; VCE--; CE++; sumce -= Edge[i][j];
+            }
+            if (Edge[0][i] == 0 && Edge[0][j] != 0) {
+                sumce += Edge[i][j];
+                ref2 = Edge[0][j];
+                Edge[0][i] = ref2; Edge[0][ref2] = i;
+                Edge[0][j] = -1;
+                VCE++;
+                // CCE stuff ref1 and ref2
+                cout << "NE situation J " << i << " " << ref2 << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                        if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                            ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                        }
+                        if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                            cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        }
+                        if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                            ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        }
+                    }
+                }
+                av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+                cout << " the average for this situation is " << av << endl;
+                // reinitialized here
+                ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+                Edge[0][i] = 0; Edge[0][ref2] = j;
+                Edge[0][j] = ref2;
+                ref2 = 0, ref3 = 0;
+                VCE--; sumce -= Edge[i][j];
+            }
+            if (Edge[0][j] == 0 && Edge[0][i] != 0) {
+                sumce += Edge[i][j];
+                ref2 = Edge[0][i];
 
-		gh++;
+                Edge[0][j] = ref2; Edge[0][ref2] = j;
+                Edge[0][i] = -1;
+                VCE++;
+                // CCE stuff ref1 and ref2
+                cout << "NE situation I " << ref2 << " " << j << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                        if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                            ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                        }
+                        if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                            cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        }
+                        if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                            ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        }
+                    }
+                }
+                av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+                cout << " the average for this situation is " << av << endl;
+                // reinitialized here
+                ne = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+                Edge[0][j] = 0; Edge[0][ref2] = i;
+                Edge[0][i] = ref2;
+                ref2 = 0,
+                    VCE--; sumce -= Edge[i][j];
+            }
+            if (Edge[0][i] == 0 && Edge[0][j] == 0) {
+                sumce += Edge[i][j];
+                Edge[0][i] = j; Edge[0][j] = i;
+                CE++; VCE++; VCE++;
+                // CCE stuff ref1 and ref2
+                cout << "IE situation " << i << " " << j << endl;
+                for (int y = 1; y < n; y++) {
+                    if (Edge[0][y] == -1) { continue; }
+                    for (int z = 1 + y; z <= n; z++) {
+                        if (Edge[0][z] == -1) { continue; }
+                        if (Edge[0][y] == 0 && Edge[0][z] != 0 || Edge[0][y] != 0 && Edge[0][z] == 0) {
+                            ne += Edge[y][z]; nene += Edge[y][z] * Edge[y][z];
+                            cout << " neighbor edge " << y << " " << z << " and ne is " << ne << " and nene is " << nene << endl;
+                        }
+                        if (Edge[0][y] != 0 && Edge[0][z] != 0 && Edge[0][y] != z && Edge[0][z] != y) {
+                            cce += Edge[y][z]; ccecce += Edge[y][z] * Edge[y][z];
+                            cout << " connecting chosen edge " << y << " " << z << " and cce is " << cce << " and ccecce is " << ccecce << endl;
+                        }
+                        if (Edge[0][y] == 0 && Edge[0][z] == 0) {
+                            ie += Edge[y][z]; ieie += Edge[y][z] * Edge[y][z];
+                            cout << " independent edge " << y << " " << z << " and ie is " << ie << " and ieie is " << ieie << endl;
+                        }
+                    }
+                }
+                av = sumce + ((0.5) * (1 / (b - 1 + CE - VCE)) * cce) + ((1 / (b - 1 + CE - VCE)) * ne) + ((2 / (b - 1 + CE - VCE)) * ie);
+                cout << " the average for this situation is " << av << " and sumce " << sumce << " ce " << CE << " vce " << VCE << " cce " << cce << " ne " << ne << " ie " << ie << endl;
+                for (int c = 1; c < n; c++) {
+                    if (Edge[0][c] == -1) { continue; }
+                    for (int g = c + 1; g <= n; g++) {
+                        if (Edge[0][g] == -1 || Edge[0][g] == c || Edge[0][c] == g) { continue; }
+                        for (int p = c; p < n; p++) {
+                            if (Edge[0][p] == -1) { continue; }
+                            for (int k = 1 + p; k <= n; k++) {
+                                if (Edge[0][k] == -1 || Edge[0][k] == p || Edge[0][p] == k) { continue; }
+                                if (Edge[0][c] != 0 && k == c || Edge[0][c] != 0 && p == c || Edge[0][g] != 0 && k == g || Edge[0][g] != 0 && p == g) { continue; }
+                                if (Edge[0][k] != 0 && k == c || Edge[0][k] != 0 && k == g || Edge[0][p] != 0 && p == c || Edge[0][p] != 0 && p == g) { continue; }
+                                if (Edge[0][c] == p && g == k || Edge[0][c] == k && g == p || Edge[0][g] == p && c == k || Edge[0][g] == k && c == p) { continue; }
+                                if (Edge[0][k] == c && g == p || Edge[0][k] == g && c == p || Edge[0][p] == c && g == k || Edge[0][p] == g && c == k) { continue; }
+                                if (Edge[0][c] == p && Edge[0][g] == k || Edge[0][c] == k && Edge[0][g] == p) { continue; }
+                                if (p == c && k <= g) { continue; }
+                                // standadiation stuff begin
+                                if (Edge[0][k] != 0 && Edge[0][p] != 0 && Edge[0][c] != 0 && Edge[0][g] != 0) {
+                                    cceccei += Edge[c][g] * Edge[p][k];
+                                    cout << "cceccei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g == k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g == p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c == k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c == p) {
+                                    nenen += Edge[c][g] * Edge[p][k];
+                                    cout << "nenen Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && g != k ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && g != p ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 && c != k ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 && c != p) {
+                                    nenei += Edge[c][g] * Edge[p][k];
+                                    cout << "nenei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0) {
+                                    if (c == k || c == p || g == k || g == p) {
+                                        ieien += Edge[c][g] * Edge[p][k];
+                                        cout << "ieien Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                    else {
+                                        ieiei += Edge[c][g] * Edge[p][k];
+                                        cout << "ieiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] != 0 && Edge[0][k] != 0 ||
+                                    Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    ccenei += Edge[c][g] * Edge[p][k];
+                                    cout << "ccenei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] != 0) {
+                                    cceiei += Edge[c][g] * Edge[p][k];
+                                    cout << "cceiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                }
+                                if (Edge[0][c] != 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] != 0 && Edge[0][p] == 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] != 0 && Edge[0][k] == 0 ||
+                                    Edge[0][c] == 0 && Edge[0][g] == 0 && Edge[0][p] == 0 && Edge[0][k] != 0) {
+                                    if (c == p || c == k || g == k || g == p) {
+                                        neien += Edge[c][g] * Edge[p][k];
+                                        cout << "neien Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                    }
+                                    else {
+                                        neiei += Edge[c][g] * Edge[p][k];
+                                        cout << "neiei Edge[" << c << "][" << g << "]" << " Edge[" << p << "][" << k << "]" << endl;
+                                            
+                                    }
+                                }
+                            }
 
-		sumtwo = 0; sumthree = 0; sumislands = 0;
-		three++;
-		if (one == three) {
-			three++;
-		}
-		if (three > n)
-		{
-			two++;
-			if (two == one) {
-				two++;
-			}
-			three = two + 1;
-			if (three == one) {
-				three++;
-			}
+                            // standard deviation stuff end
+                        }
+                    }
+                }
+                double denom1 = (b - 1 + CE - VCE);
+                double denom2 = (b - 2 + CE - VCE);
 
-		}
+                va =
+                    (0.5 / denom1) * ccecce +
+                    (1.0 / denom1) * nene +
+                    (2.0 / denom1) * ieie +
 
-		if (two > n - 1 && three > n)
-		{
-			cout << "\nThe minimum average tour going through vertex " << yu << " is " << min
-				<< " via E(" << yu <<")("<< po << ") and E(" << yu << ")("<<ri << ")\n\n";
-			min = average;
-			one++; two = 1; three = 2;
-			if (one == three) {
-				three = 3;
-			}
-		}
+                    (1.0 / (denom1 * denom2)) *
+                    (
+                        0.5 * cceccei +
+                        nenen +
+                        2 * nenei +
+                        4 * ieien +
+                        8 * ieiei +
+                        ccenei +
+                        2 * cceiei +
+                        2 * neien +
+                        4 * neiei
+                        )
 
+                    - ((av - sumce) * (av - sumce));
+                cout << "The standard deviation is " << sqrt(va) << endl;
+                 double entro = lgamma(denom1) + (log(2.0) * (CE-1)); double min=0.0; int min1=0, min2=0;
+                double z = exp(entro-(beta*av)+((beta)*(beta)*(0.5)*va));
+                if(z>=min){
+                   min 
+                }
+                // reinitialized here
+                ne = 0.0, cce = 0.0, ie = 0.0, nenen = 0.0, cceccei = 0.0, ieien = 0.0, nenei = 0.0, ieiei = 0.0, av = 0.0, va = 0.0;
+                nene = 0.0, ccecce = 0.0, ieie = 0.0, ccenei = 0.0, cceiei = 0.0, neien = 0.0, neiei = 0.0;
+                Edge[0][i] = 0; Edge[0][j] = 0;
+                CE--; VCE--; VCE--; sumce -= Edge[i][j];
+            }
+        }
+    }
 
-	} while (three <= n && one <= n);
-	cout << "\nThe minimum average tour going through vertex " << yu << " is " << min
-		<< " via E(" << yu <<")("<< po << ") and E(" << yu <<")("<< ri << ")\n\n";
+    return 0;
 
-
-	cout << "the smallest tour average goes through vertex "<<mi<<" and its " << mini << " via E(" << mi <<")("<< ju[1] << ") and E(" << mi << ")("<<se[1]<<")\n\n";
-	if (n == 4) {
-		cout << "Therefore the smallest cycle is E(" << ju[1] << ")(" << mi << ")(" << se[1] << ")";
-
-		for (int drake = 1; drake <= n; drake++) {
-		
-				if (drake != mi && drake != ju[1] && drake != se[1]) {
-			
-				cout << "(" << drake << ") and its "<< mini<<"\n";
-			}
-		}
-	}
-	else {
-		int four = 1; int five = 2, lit=1, hg = 1;; double mini2 = mini, wap2, wap2i = 0;
-
-		do {
-			do {
-				double lit1 = lit;
-				int test5 = 2;
-				for (int jkl = 1; jkl <= lit; jkl++) {
-					if (five == four || five == mi || four == mi || five == ju[jkl] || four == ju[jkl] || five == se[jkl] || four == se[jkl]) {
-						test5 = 1;
-					}
-				}
-
-				int kno = mi, kyes = mi, jg = 1;
-
-				if (kno > ju[jg])
-				{
-					Edges[kno][ju[jg]] = Edges[ju[jg]][kno];
-				}
-				if (kyes > se[jg]) {
-					Edges[kyes][se[jg]] = Edges[se[jg]][kyes];
-				}
-
-				if (ju[lit] > four) {
-					Edges[ju[lit]][four] = Edges[four][ju[lit]];
-				}
-				if (se[lit] > five) {
-					Edges[se[lit]][five] = Edges[five][se[lit]];
-				}
-				if (four > five) {
-					Edges[four][five] = Edges[five][four];
-				}
-				do {
-					wap2i += Edges[kno][ju[jg]] + Edges[kyes][se[jg]]; kno = ju[jg]; kyes = se[jg]; kno = ju[jg];
-					jg++;
-				} while (jg <= lit);
-				wap2 = wap2i + Edges[ju[lit]][four] + Edges[se[lit]][five]; wap2i = 0;
-				for (int neitwo = 1; neitwo <= n; neitwo++)
-				{
-					if (neitwo < four)
-					{
-						Edges[four][neitwo] = Edges[neitwo][four];
-					}
-					int test2 = 2;
-					for (int neithree = 1; neithree <= lit; neithree++) {
-						if (neitwo == four || neitwo == five || neitwo == mi || neitwo == ju[neithree] || neitwo == se[neithree])
-						{
-							test2 = 1;
-						}
-					}
-					if (test2 == 1) {
-						continue;
-					}
-					sumfour += Edges[four][neitwo];
-
-				}
-				for (int nei = 1; nei <= n; nei++)
-				{
-					if (nei < five)
-					{
-						Edges[five][nei] = Edges[nei][five];
-					}
-					int test3 = 2;
-					for (int neifour = 1; neifour <= lit; neifour++) {
-						if (nei == five || nei == four || nei == mi || nei == ju[neifour] || nei == se[neifour])
-						{
-							test3 = 1;
-						}
-					}
-					if (test3 == 1) {
-						continue;
-					}
-					sumfive += Edges[five][nei];
-				}
-				for (int x = 1; x <= n - 1; x++)
-				{
-					for (int v = 2; v <= n; v++)
-					{
-						int test4 = 2;
-						for (int love = 1; love <= lit; love++) {
-							if (x >= v || x == four || v == four || x == five || v == five || x == mi || v == mi || x == ju[love] || v == ju[love] || x == se[love] || v == se[love])
-							{
-								test4 = 1;
-							}
-						}
-						if (test4 == 1) {
-							continue;
-						}
-						sumislands2 += Edges[x][v];
-					}
-				}
-
-
-
-				double wapaverage2[1176]; 
-				if (sumfour == 0 && sumfive == 0 && sumislands2 == 0) {
-					wapaverage2[hg] = wap2 + Edges[four][five];
-				}
-				else {
-					wapaverage2[hg] = wap2 + (1 / (b - ((2 * (lit1 + 1)) + 1))) * (sumfour + sumfive) + ((2 / (b - ((2 * (lit1 + 1)) + 1))) * sumislands2);
-				}
-
-				if (test5 == 2) {
-					cout << "\n\nGoing through E";
-					for (int tyr = lit; tyr >= 1; tyr--) {
-						cout << "(" << ju[tyr] << ")";
-					}cout << "(" << mi << ")";
-					for (int tr = 1; tr <= lit; tr++) {
-						cout << "(" << se[tr] << ")";
-					}
-					cout << " via E(" << ju[lit] << ")(" << four << ") and E(" << se[lit] << ")(" << five << ") is ("
-						<< wap2 << ")+(1/" << (b - ((2 * (lit1 + 1)) + 1)) << ")(" << sumfive + sumfour << ")+(2/" << (b - ((2 * (lit1 + 1)) + 1)) << ")(" << sumislands2
-						<< ")=" << wapaverage2[hg];
-
-					if (mini2 >= wapaverage2[hg]) {
-						mini2 = wapaverage2[hg]; lit++; ju[lit] = four; se[lit] = five; lit--;
-					}
-					int repeat = 1;
-					for (int repeated = 1; repeated <= hg - 1; repeated++) {
-						if (wapaverage2[repeated] == wapaverage2[hg]) {
-							repeat++;
-						}
-					}
-					if (repeat > 1) {
-						cout << "         this value has repeated " << repeat << " times so far.";
-					}
-				}
-			
-				hg++;
-
-				sumfour = 0, sumfive = 0, sumislands2 = 0;
-				five++;
-				if (five > n) {
-					four++; five = 1;
-				}
-			} while (five <= n && four <= n); lit++; four = 1; five = 2;
-			if (lit == (np + 1)) {
-				cout << "\n\nThe smallest tour is " << mini2 << " via E";
-				for (int tyr = lit; tyr >= 1; tyr--) {
-					cout << "(" << ju[tyr] << ")";
-				}cout << "(" << mi << ")";
-				for (int tr = 1; tr <= lit; tr++) {
-					cout << "(" << se[tr] << ")";
-				}
-			}
-			else {
-				cout << "\n\nThe smallest tour average is " << mini2 << " via E";
-				for (int tyr = lit; tyr >= 1; tyr--) {
-					cout << "(" << ju[tyr] << ")";
-				}cout << "(" << mi << ")";
-				for (int tr = 1; tr <= lit; tr++) {
-					cout << "(" << se[tr] << ")";
-				}
-			}
-		} while (lit <= np);
-
-		for (int drake = 1; drake <= n; drake++) {
-			int test6 = 2;
-			for (int yolo = 1; yolo <= (np + 1); yolo++) {
-				if (drake == mi || drake == ju[yolo] || drake == se[yolo]) { test6 = 1; }
-			}
-			if (test6 == 2) {
-				cout << "(" << drake << ")";
-			}
-		}
-		cout << " thats your cycle.\n";
-	}string ty;
-			cin >> ty;
-			
-		
-	return 0;
 }
+
+
+
